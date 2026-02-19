@@ -1,0 +1,398 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Tracker | Debojit Dutta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --accent: #8b5cf6;
+            --bg-dark: #0f172a;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .artistic-border {
+            position: relative;
+            padding: 2px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 25px;
+        }
+
+        .header-font { font-family: 'Playfair Display', serif; }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+        }
+
+        .day-cell:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: scale(1.05);
+        }
+
+        .day-cell.active {
+            background: var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .day-cell.today {
+            border: 2px solid var(--secondary);
+        }
+
+        .status-btn {
+            transition: all 0.2s;
+        }
+
+        .status-btn:active { transform: scale(0.95); }
+
+        .present { background: #10b981; }
+        .absent { background: #ef4444; }
+        .cancelled { background: #64748b; }
+
+        /* Custom Coded Symbols */
+        .symbol-academic::before { content: "◈"; margin-right: 8px; color: var(--secondary); }
+        .symbol-clock::before { content: "◔"; margin-right: 6px; }
+        .symbol-room::before { content: "◬"; margin-right: 6px; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-8">
+        <!-- Profile Header -->
+        <header class="glass p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="space-y-2 text-center md:text-left">
+                <h1 class="text-4xl md:text-5xl header-font text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500">
+                    Debojit Dutta
+                </h1>
+                <p class="text-slate-400 flex items-center justify-center md:justify-start gap-4">
+                    <span><span class="text-pink-500">⌬</span> 2nd Semester</span>
+                    <span><span class="text-blue-500">⧉</span> Arts</span>
+                    <span><span class="text-purple-500">⊚</span> Roll: 20</span>
+                </p>
+                <p class="text-sm font-semibold tracking-widest uppercase text-slate-500">Lumding College</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="text-center p-4 rounded-2xl bg-slate-800/50 border border-slate-700">
+                    <div id="overall-pct-default" class="text-2xl font-bold text-blue-400">0%</div>
+                    <div class="text-[10px] uppercase tracking-tighter text-slate-400">From Jan 19</div>
+                </div>
+                <div class="text-center p-4 rounded-2xl bg-slate-800/50 border border-pink-700/30">
+                    <div id="overall-pct-proper" class="text-2xl font-bold text-pink-400">0%</div>
+                    <div class="text-[10px] uppercase tracking-tighter text-slate-400">From Feb 02</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Column: Calendar & Filters -->
+            <div class="lg:col-span-5 space-y-8">
+                <div class="glass p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-xl font-semibold header-font flex items-center">
+                            <span class="mr-2">📅</span> February 2026
+                        </h2>
+                        <div class="text-xs text-slate-400">Today: Feb 12</div>
+                    </div>
+                    <div class="calendar-grid text-xs text-slate-500 mb-4 text-center">
+                        <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+                    </div>
+                    <div id="calendar-body" class="calendar-grid">
+                        <!-- Days generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Subject Wise Stats -->
+                <div class="glass p-6 space-y-4">
+                    <h3 class="header-font text-lg border-b border-white/10 pb-2">Subject Performance</h3>
+                    <div id="subject-stats" class="space-y-3">
+                        <!-- Stats generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Daily Schedule -->
+            <div class="lg:col-span-7">
+                <div class="glass p-6 min-h-[500px]">
+                    <div id="selected-date-header" class="mb-8">
+                        <h2 class="text-3xl header-font text-blue-300" id="display-date">Select a Date</h2>
+                        <p class="text-slate-400" id="display-day">Pick a day to mark attendance</p>
+                    </div>
+
+                    <div id="routine-container" class="space-y-4">
+                        <div class="text-center py-20 text-slate-500 italic">
+                            ◈ Select a date on the calendar to manage your classes
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            startDate: new Date(2026, 0, 19),
+            properDate: new Date(2026, 1, 2),
+            today: new Date(2026, 1, 12),
+            subjects: [
+                { id: 'eng-major', name: 'English (Major)', color: '#6366f1' },
+                { id: 'edu-minor', name: 'Education (Minor)', color: '#8b5cf6' },
+                { id: 'eng-sec', name: 'English (SEC)', color: '#ec4899' },
+                { id: 'ben-mdc', name: 'Bengali (MDC)', color: '#f59e0b' },
+                { id: 'eng-aecc', name: 'English (AECC)', color: '#10b981' },
+                { id: 'cfvd-vac1', name: 'CFVD (VAC-1)', color: '#06b6d4' },
+                { id: 'ui-vac2', name: 'UI (VAC-2)', color: '#f43f5e' }
+            ],
+            routine: {
+                1: [ // Monday
+                    { time: '8:30 a.m.', sub: 'Education (Minor)', room: '6', id: 'edu-minor' },
+                    { time: '9:30 a.m.', sub: 'English (AECC)', room: '11', id: 'eng-aecc' },
+                    { time: '10:30 a.m.', sub: 'English (Major)', room: '17', id: 'eng-major' },
+                    { time: '12:30 p.m.', sub: 'CFVD (VAC-1)', room: '6', id: 'cfvd-vac1' }
+                ],
+                2: [ // Tuesday
+                    { time: '8:30 a.m.', sub: 'Bengali (MDC)', room: '5', id: 'ben-mdc' },
+                    { time: '9:30 a.m.', sub: 'English (Major)', room: '17', id: 'eng-major' },
+                    { time: '10:30 a.m.', sub: 'English (SEC)', room: '2', id: 'eng-sec' },
+                    { time: '2:30 p.m.', sub: 'Education (Minor)', room: '1', id: 'edu-minor' }
+                ],
+                3: [ // Wednesday
+                    { time: '8:30 a.m.', sub: 'Education (Minor)', room: '6', id: 'edu-minor' }
+                ],
+                4: [ // Thursday
+                    { time: '8:30 a.m.', sub: 'English (SEC)', room: '9', id: 'eng-sec' },
+                    { time: '11:30 a.m.', sub: 'Bengali (MDC)', room: '8', id: 'ben-mdc' },
+                    { time: '12:30 p.m.', sub: 'UI (VAC-2)', room: '6', id: 'ui-vac2' }
+                ],
+                5: [ // Friday
+                    { time: '8:30 a.m.', sub: 'English (SEC)', room: '7', id: 'eng-sec' },
+                    { time: '9:30 a.m.', sub: 'English (Major)', room: '17', id: 'eng-major' },
+                    { time: '11:30 a.m.', sub: 'Education (Minor)', room: '6', id: 'edu-minor' },
+                    { time: '2:30 p.m.', sub: 'CFVD (VAC-1)', room: '6', id: 'cfvd-vac1' }
+                ],
+                6: [ // Saturday
+                    { time: '9:30 a.m.', sub: 'Bengali (MDC)', room: '6', id: 'ben-mdc' },
+                    { time: '11:30 a.m.', sub: 'English (Major)', room: '13', id: 'eng-major' },
+                    { time: '12:30 p.m.', sub: 'English (AECC)', room: '11', id: 'eng-aecc' },
+                    { time: '2:30 p.m.', sub: 'UI (VAC-2)', room: '6', id: 'ui-vac2' }
+                ],
+                0: [] // Sunday
+            }
+        };
+
+        // State Management
+        let attendanceData = JSON.parse(localStorage.getItem('debojit_attendance_2026')) || {};
+        let selectedDate = new Date(2026, 1, 12);
+
+        function init() {
+            renderCalendar(1, 2026); // February 2026
+            updateStats();
+            selectDate(12);
+        }
+
+        function renderCalendar(month, year) {
+            const container = document.getElementById('calendar-body');
+            container.innerHTML = '';
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // Fill empty slots
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                container.appendChild(empty);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateObj = new Date(year, month, d);
+                const cell = document.createElement('div');
+                cell.className = `day-cell font-medium ${isToday(dateObj) ? 'today text-pink-400' : ''}`;
+                cell.innerText = d;
+                
+                // Disable dates before Jan 19
+                if (dateObj < CONFIG.startDate) {
+                    cell.classList.add('opacity-20', 'cursor-not-allowed');
+                } else {
+                    cell.onclick = () => selectDate(d);
+                }
+
+                if (selectedDate.getDate() === d) cell.classList.add('active');
+                
+                container.appendChild(cell);
+            }
+        }
+
+        function isToday(date) {
+            return date.getDate() === CONFIG.today.getDate() && 
+                   date.getMonth() === CONFIG.today.getMonth();
+        }
+
+        function selectDate(day) {
+            selectedDate = new Date(2026, 1, day);
+            
+            // Update UI Active State
+            document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('active'));
+            const cells = document.querySelectorAll('.day-cell');
+            const dayIdx = day + new Date(2026, 1, 1).getDay() - 1;
+            if(cells[dayIdx]) cells[dayIdx].classList.add('active');
+
+            document.getElementById('display-date').innerText = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            document.getElementById('display-day').innerText = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+
+            renderRoutine();
+        }
+
+        function renderRoutine() {
+            const container = document.getElementById('routine-container');
+            const dayOfWeek = selectedDate.getDay();
+            const classes = CONFIG.routine[dayOfWeek] || [];
+            const dateKey = selectedDate.toISOString().split('T')[0];
+
+            if (classes.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-slate-500 italic">No classes scheduled for Sundays. Take a break!</div>`;
+                return;
+            }
+
+            container.innerHTML = classes.map((cls, idx) => {
+                const status = attendanceData[dateKey]?.[idx] || 'none';
+                return `
+                    <div class="artistic-border">
+                        <div class="bg-slate-900 rounded-[23px] p-5 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex-1">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 flex items-center">
+                                    <span class="symbol-clock"></span> ${cls.time}
+                                    <span class="ml-4 symbol-room"></span> Room ${cls.room}
+                                </div>
+                                <h4 class="text-xl font-semibold text-white">${cls.sub}</h4>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="markStatus('${dateKey}', ${idx}, 'present')" 
+                                    class="status-btn px-4 py-2 rounded-xl text-xs font-bold uppercase ${status === 'present' ? 'present shadow-lg shadow-emerald-900/40' : 'bg-slate-800 text-slate-400 hover:bg-emerald-900/20'}">
+                                    Present
+                                </button>
+                                <button onclick="markStatus('${dateKey}', ${idx}, 'absent')" 
+                                    class="status-btn px-4 py-2 rounded-xl text-xs font-bold uppercase ${status === 'absent' ? 'absent shadow-lg shadow-red-900/40' : 'bg-slate-800 text-slate-400 hover:bg-red-900/20'}">
+                                    Absent
+                                </button>
+                                <button onclick="markStatus('${dateKey}', ${idx}, 'cancelled')" 
+                                    class="status-btn px-4 py-2 rounded-xl text-xs font-bold uppercase ${status === 'cancelled' ? 'cancelled shadow-lg shadow-slate-700/40' : 'bg-slate-800 text-slate-400 hover:bg-slate-700/20'}">
+                                    Cancelled
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.markStatus = function(dateKey, index, status) {
+            if (!attendanceData[dateKey]) attendanceData[dateKey] = {};
+            
+            // Toggle if clicking same status
+            if (attendanceData[dateKey][index] === status) {
+                delete attendanceData[dateKey][index];
+            } else {
+                attendanceData[dateKey][index] = status;
+            }
+
+            localStorage.setItem('debojit_attendance_2026', JSON.stringify(attendanceData));
+            renderRoutine();
+            updateStats();
+        };
+
+        function calculateStats(startLimit) {
+            let totalPossible = 0;
+            let totalAttended = 0;
+            const subjectTallies = {};
+            CONFIG.subjects.forEach(s => subjectTallies[s.id] = { attended: 0, total: 0 });
+
+            // Iterate from start date to today
+            let cursor = new Date(startLimit);
+            while (cursor <= CONFIG.today) {
+                const dayOfWeek = cursor.getDay();
+                const dateKey = cursor.toISOString().split('T')[0];
+                const classes = CONFIG.routine[dayOfWeek] || [];
+
+                classes.forEach((cls, idx) => {
+                    const status = attendanceData[dateKey]?.[idx];
+                    
+                    if (status !== 'cancelled') {
+                        totalPossible++;
+                        subjectTallies[cls.id].total++;
+                        
+                        if (status === 'present') {
+                            totalAttended++;
+                            subjectTallies[cls.id].attended++;
+                        }
+                    }
+                });
+                cursor.setDate(cursor.getDate() + 1);
+            }
+
+            return {
+                overall: totalPossible === 0 ? 0 : Math.round((totalAttended / totalPossible) * 100),
+                subjects: subjectTallies
+            };
+        }
+
+        function updateStats() {
+            const statsJan = calculateStats(CONFIG.startDate);
+            const statsFeb = calculateStats(CONFIG.properDate);
+
+            document.getElementById('overall-pct-default').innerText = statsJan.overall + '%';
+            document.getElementById('overall-pct-proper').innerText = statsFeb.overall + '%';
+
+            const subContainer = document.getElementById('subject-stats');
+            subContainer.innerHTML = CONFIG.subjects.map(sub => {
+                const data = statsJan.subjects[sub.id];
+                const pct = data.total === 0 ? 0 : Math.round((data.attended / data.total) * 100);
+                return `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-300">${sub.name}</span>
+                            <span class="font-bold" style="color: ${sub.color}">${pct}%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="h-full transition-all duration-1000" style="width: ${pct}%; background: ${sub.color}"></div>
+                        </div>
+                        <div class="text-[9px] text-slate-500 text-right">${data.attended}/${data.total} Classes</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        init();
+    </script>
+</body>
+</html>
