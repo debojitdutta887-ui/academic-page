@@ -3,398 +3,680 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Tracker | Debojit Dutta</title>
+    <title>Academic Syllabus Portal | Lumding College</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Inter:wght@300;400;600&family=Tiro+Bangla:ital@0;1&family=Special+Elite&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        :root {
-            --primary: #6366f1;
-            --secondary: #ec4899;
-            --accent: #8b5cf6;
-            --bg-dark: #0f172a;
-        }
-
+        /* Base Transitions */
         body {
-            font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            color: #f8fafc;
-            min-height: 100vh;
+            transition: background-color 0.8s ease, color 0.5s ease;
+        }
+        .syllabus-container {
+            transition: all 0.5s ease-in-out;
         }
 
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.3); 
+            border-radius: 4px;
         }
 
-        .artistic-border {
-            position: relative;
-            padding: 2px;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            border-radius: 25px;
+        /* ---------------- THEMES ---------------- */
+
+        /* 1. Default / Dashboard Theme */
+        .theme-dashboard {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .theme-dashboard .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .header-font { font-family: 'Playfair Display', serif; }
+        /* 2. English Major: Dark Academia / Vintage Library */
+        .theme-lit {
+            background-color: #1a1614;
+            color: #d4c5b0;
+            font-family: 'Cormorant Garamond', serif;
+            background-image: url('https://images.unsplash.com/photo-1507842217121-9e859bd99490?q=80&w=2070&auto=format&fit=crop');
+            background-blend-mode: overlay;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        .theme-lit .accent-text { color: #ffbf00; }
+        .theme-lit .card {
+            background: rgba(20, 15, 10, 0.85);
+            border: 1px solid #3e3221;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        .theme-lit h1, .theme-lit h2 { font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
 
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
+        /* 3. Education: Vintage Paper / History */
+        .theme-edu {
+            background-color: #f0e6d2;
+            color: #3d342b;
+            font-family: 'Special Elite', monospace; /* Typewriter */
+            background-image: url('https://www.transparenttextures.com/patterns/aged-paper.png');
+        }
+        .theme-edu .card {
+            background: #fffdf0;
+            border: 2px solid #8b7355;
+            box-shadow: 5px 5px 0px #8b7355;
+            transform: rotate(-1deg);
+        }
+        .theme-edu table { border-color: #5c4d3c; }
+        .theme-edu th { background-color: #d6c6a8; color: #2a221a; }
+
+        /* 4. Bengali: Cultural / Earthy */
+        .theme-ben {
+            background-color: #fff5f2;
+            color: #591c0b;
+            font-family: 'Tiro Bangla', serif;
+            background-image: radial-gradient(circle at 50% 50%, #ffdecb 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .theme-ben .card {
+            background: #fff;
+            border-left: 8px solid #c92a2a;
+            border-right: 8px solid #c92a2a;
+            box-shadow: 0 10px 15px -3px rgba(168, 68, 68, 0.2);
+        }
+        .theme-ben h1 { color: #c92a2a; text-decoration: underline; text-decoration-style: wavy; }
+
+        /* 5. VAC: Sovereign / Official */
+        .theme-vac {
+            background: linear-gradient(135deg, #fffbf0 0%, #fff 100%);
+            color: #0f172a;
+            font-family: 'Playfair Display', serif;
+        }
+        .theme-vac .header-strip {
+            background: linear-gradient(90deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+            height: 6px;
+            width: 100%;
+        }
+        .theme-vac .card {
+            background: white;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
         }
 
-        .day-cell {
-            aspect-ratio: 1/1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 12px;
+        /* 6. SEC/AECC: Modern / Creative */
+        .theme-modern {
+            background-color: #e0f2fe;
+            color: #0c4a6e;
+            font-family: 'Inter', sans-serif;
+        }
+        .theme-modern .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            border: 1px solid #bae6fd;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         }
 
-        .day-cell:hover {
-            background: rgba(99, 102, 241, 0.2);
-            transform: scale(1.05);
+        /* Utility specific for JS injection */
+        .fade-in {
+            animation: fadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .day-cell.active {
-            background: var(--primary);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        .back-btn {
+            transition: transform 0.2s;
         }
-
-        .day-cell.today {
-            border: 2px solid var(--secondary);
+        .back-btn:hover {
+            transform: translateX(-5px);
         }
-
-        .status-btn {
-            transition: all 0.2s;
-        }
-
-        .status-btn:active { transform: scale(0.95); }
-
-        .present { background: #10b981; }
-        .absent { background: #ef4444; }
-        .cancelled { background: #64748b; }
-
-        /* Custom Coded Symbols */
-        .symbol-academic::before { content: "◈"; margin-right: 8px; color: var(--secondary); }
-        .symbol-clock::before { content: "◔"; margin-right: 6px; }
-        .symbol-room::before { content: "◬"; margin-right: 6px; }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
     </style>
-    <link rel="manifest" href="manifest.json">
 </head>
-<body class="p-4 md:p-8">
+<body class="theme-dashboard min-h-screen flex flex-col transition-colors duration-700">
 
-    <div class="max-w-7xl mx-auto space-y-8">
-        <!-- Profile Header -->
-        <header class="glass p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="space-y-2 text-center md:text-left">
-                <h1 class="text-4xl md:text-5xl header-font text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-500">
-                    Debojit Dutta
-                </h1>
-                <p class="text-slate-400 flex items-center justify-center md:justify-start gap-4">
-                    <span><span class="text-pink-500">⌬</span> 2nd Semester</span>
-                    <span><span class="text-blue-500">⧉</span> Arts</span>
-                    <span><span class="text-purple-500">⊚</span> Roll: 20</span>
-                </p>
-                <p class="text-sm font-semibold tracking-widest uppercase text-slate-500">Lumding College</p>
-            </div>
-            <div class="flex gap-4">
-                <div class="text-center p-4 rounded-2xl bg-slate-800/50 border border-slate-700">
-                    <div id="overall-pct-default" class="text-2xl font-bold text-blue-400">0%</div>
-                    <div class="text-[10px] uppercase tracking-tighter text-slate-400">From Jan 19</div>
-                </div>
-                <div class="text-center p-4 rounded-2xl bg-slate-800/50 border border-pink-700/30">
-                    <div id="overall-pct-proper" class="text-2xl font-bold text-pink-400">0%</div>
-                    <div class="text-[10px] uppercase tracking-tighter text-slate-400">From Feb 02</div>
-                </div>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <!-- Left Column: Calendar & Filters -->
-            <div class="lg:col-span-5 space-y-8">
-                <div class="glass p-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-semibold header-font flex items-center">
-                            <span class="mr-2">📅</span> February 2026
-                        </h2>
-                        <div class="text-xs text-slate-400">Today: Feb 12</div>
-                    </div>
-                    <div class="calendar-grid text-xs text-slate-500 mb-4 text-center">
-                        <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
-                    </div>
-                    <div id="calendar-body" class="calendar-grid">
-                        <!-- Days generated by JS -->
-                    </div>
-                </div>
-
-                <!-- Subject Wise Stats -->
-                <div class="glass p-6 space-y-4">
-                    <h3 class="header-font text-lg border-b border-white/10 pb-2">Subject Performance</h3>
-                    <div id="subject-stats" class="space-y-3">
-                        <!-- Stats generated by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Column: Daily Schedule -->
-            <div class="lg:col-span-7">
-                <div class="glass p-6 min-h-[500px]">
-                    <div id="selected-date-header" class="mb-8">
-                        <h2 class="text-3xl header-font text-blue-300" id="display-date">Select a Date</h2>
-                        <p class="text-slate-400" id="display-day">Pick a day to mark attendance</p>
-                    </div>
-
-                    <div id="routine-container" class="space-y-4">
-                        <div class="text-center py-20 text-slate-500 italic">
-                            ◈ Select a date on the calendar to manage your classes
-                        </div>
-                    </div>
-                </div>
+    <!-- Navbar / Header -->
+    <header class="w-full p-4 flex justify-between items-center z-50 relative card-bg transition-all">
+        <div class="flex items-center gap-3">
+            <div class="h-12 w-12 bg-gray-800 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg" id="logo-icon">LC</div>
+            <div>
+                <h1 class="text-xl font-bold leading-none" id="header-title">Lumding College</h1>
+                <p class="text-xs opacity-70">Arts Stream | Sem II</p>
             </div>
         </div>
-    </div>
+        <button onclick="renderDashboard()" class="hidden text-sm font-semibold hover:opacity-75" id="home-btn">
+            <i class="ph ph-house text-xl"></i>
+        </button>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full relative">
+        <div id="app-root" class="w-full">
+            <!-- Content Injected via JS -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center p-6 text-sm opacity-60">
+        <p>&copy; 2026 Debojit Dutta | Syllabus Portal</p>
+    </footer>
 
     <script>
-        const CONFIG = {
-            startDate: new Date(2026, 0, 19),
-            properDate: new Date(2026, 1, 2),
-            today: new Date(2026, 1, 12),
-            subjects: [
-                { id: 'eng-major', name: 'English (Major)', color: '#6366f1' },
-                { id: 'edu-minor', name: 'Education (Minor)', color: '#8b5cf6' },
-                { id: 'eng-sec', name: 'English (SEC)', color: '#ec4899' },
-                { id: 'ben-mdc', name: 'Bengali (MDC)', color: '#f59e0b' },
-                { id: 'eng-aecc', name: 'English (AECC)', color: '#10b981' },
-                { id: 'cfvd-vac1', name: 'CFVD (VAC-1)', color: '#06b6d4' },
-                { id: 'ui-vac2', name: 'UI (VAC-2)', color: '#f43f5e' }
-            ],
-            routine: {
-                1: [ // Monday
-                    { time: '8:30 a.m.', sub: 'Education (Minor)', room: '6', id: 'edu-minor' },
-                    { time: '9:30 a.m.', sub: 'English (AECC)', room: '11', id: 'eng-aecc' },
-                    { time: '10:30 a.m.', sub: 'English (Major)', room: '17', id: 'eng-major' },
-                    { time: '12:30 p.m.', sub: 'CFVD (VAC-1)', room: '6', id: 'cfvd-vac1' }
-                ],
-                2: [ // Tuesday
-                    { time: '8:30 a.m.', sub: 'Bengali (MDC)', room: '5', id: 'ben-mdc' },
-                    { time: '9:30 a.m.', sub: 'English (Major)', room: '17', id: 'eng-major' },
-                    { time: '10:30 a.m.', sub: 'English (SEC)', room: '2', id: 'eng-sec' },
-                    { time: '2:30 p.m.', sub: 'Education (Minor)', room: '1', id: 'edu-minor' }
-                ],
-                3: [ // Wednesday
-                    { time: '8:30 a.m.', sub: 'Education (Minor)', room: '6', id: 'edu-minor' }
-                ],
-                4: [ // Thursday
-                    { time: '8:30 a.m.', sub: 'English (SEC)', room: '9', id: 'eng-sec' },
-                    { time: '11:30 a.m.', sub: 'Bengali (MDC)', room: '8', id: 'ben-mdc' },
-                    { time: '12:30 p.m.', sub: 'UI (VAC-2)', room: '6', id: 'ui-vac2' }
-                ],
-                5: [ // Friday
-                    { time: '8:30 a.m.', sub: 'English (SEC)', room: '7', id: 'eng-sec' },
-                    { time: '9:30 a.m.', sub: 'English (Major)', room: '17', id: 'eng-major' },
-                    { time: '11:30 a.m.', sub: 'Education (Minor)', room: '6', id: 'edu-minor' },
-                    { time: '2:30 p.m.', sub: 'CFVD (VAC-1)', room: '6', id: 'cfvd-vac1' }
-                ],
-                6: [ // Saturday
-                    { time: '9:30 a.m.', sub: 'Bengali (MDC)', room: '6', id: 'ben-mdc' },
-                    { time: '11:30 a.m.', sub: 'English (Major)', room: '13', id: 'eng-major' },
-                    { time: '12:30 p.m.', sub: 'English (AECC)', room: '11', id: 'eng-aecc' },
-                    { time: '2:30 p.m.', sub: 'UI (VAC-2)', room: '6', id: 'ui-vac2' }
-                ],
-                0: [] // Sunday
-            }
+        // --- DATA OBJECT ---
+        const studentData = {
+            name: "Debojit Dutta",
+            college: "Lumding College",
+            stream: "Arts",
+            sem: "Second Semester",
+            roll: "Roll No: XXX"
         };
 
-        // State Management
-        let attendanceData = JSON.parse(localStorage.getItem('debojit_attendance_2026')) || {};
-        let selectedDate = new Date(2026, 1, 12);
-
-        function init() {
-            renderCalendar(1, 2026); // February 2026
-            updateStats();
-            selectDate(12);
-        }
-
-        function renderCalendar(month, year) {
-            const container = document.getElementById('calendar-body');
-            container.innerHTML = '';
-            
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-            // Fill empty slots
-            for (let i = 0; i < firstDay; i++) {
-                const empty = document.createElement('div');
-                container.appendChild(empty);
-            }
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateObj = new Date(year, month, d);
-                const cell = document.createElement('div');
-                cell.className = `day-cell font-medium ${isToday(dateObj) ? 'today text-pink-400' : ''}`;
-                cell.innerText = d;
-                
-                // Disable dates before Jan 19
-                if (dateObj < CONFIG.startDate) {
-                    cell.classList.add('opacity-20', 'cursor-not-allowed');
-                } else {
-                    cell.onclick = () => selectDate(d);
-                }
-
-                if (selectedDate.getDate() === d) cell.classList.add('active');
-                
-                container.appendChild(cell);
-            }
-        }
-
-        function isToday(date) {
-            return date.getDate() === CONFIG.today.getDate() && 
-                   date.getMonth() === CONFIG.today.getMonth();
-        }
-
-        function selectDate(day) {
-            selectedDate = new Date(2026, 1, day);
-            
-            // Update UI Active State
-            document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('active'));
-            const cells = document.querySelectorAll('.day-cell');
-            const dayIdx = day + new Date(2026, 1, 1).getDay() - 1;
-            if(cells[dayIdx]) cells[dayIdx].classList.add('active');
-
-            document.getElementById('display-date').innerText = selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            document.getElementById('display-day').innerText = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-
-            renderRoutine();
-        }
-
-        function renderRoutine() {
-            const container = document.getElementById('routine-container');
-            const dayOfWeek = selectedDate.getDay();
-            const classes = CONFIG.routine[dayOfWeek] || [];
-            const dateKey = selectedDate.toISOString().split('T')[0];
-
-            if (classes.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 text-slate-500 italic">No classes scheduled for Sundays. Take a break!</div>`;
-                return;
-            }
-
-            container.innerHTML = classes.map((cls, idx) => {
-                const status = attendanceData[dateKey]?.[idx] || 'none';
-                return `
-                    <div class="artistic-border">
-                        <div class="bg-slate-900 rounded-[23px] p-5 flex flex-col md:flex-row justify-between items-center gap-4">
-                            <div class="flex-1">
-                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 flex items-center">
-                                    <span class="symbol-clock"></span> ${cls.time}
-                                    <span class="ml-4 symbol-room"></span> Room ${cls.room}
-                                </div>
-                                <h4 class="text-xl font-semibold text-white">${cls.sub}</h4>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="markStatus('${dateKey}', ${idx}, 'present')" 
-                                    class="status-btn px-4 py-2 rounded-xl text-xs font-bold uppercase ${status === 'present' ? 'present shadow-lg shadow-emerald-900/40' : 'bg-slate-800 text-slate-400 hover:bg-emerald-900/20'}">
-                                    Present
-                                </button>
-                                <button onclick="markStatus('${dateKey}', ${idx}, 'absent')" 
-                                    class="status-btn px-4 py-2 rounded-xl text-xs font-bold uppercase ${status === 'absent' ? 'absent shadow-lg shadow-red-900/40' : 'bg-slate-800 text-slate-400 hover:bg-red-900/20'}">
-                                    Absent
-                                </button>
-                                <button onclick="markStatus('${dateKey}', ${idx}, 'cancelled')" 
-                                    class="status-btn px-4 py-2 rounded-xl text-xs font-bold uppercase ${status === 'cancelled' ? 'cancelled shadow-lg shadow-slate-700/40' : 'bg-slate-800 text-slate-400 hover:bg-slate-700/20'}">
-                                    Cancelled
-                                </button>
-                            </div>
+        const syllabusData = {
+            englishMajor: {
+                id: "eng-maj",
+                title: "English Major (DSC-2)",
+                subtitle: "Drama: 16th & 17th Century",
+                code: "MAJ-ENG-2.1",
+                credits: 4,
+                marks: "60 (End) + 40 (Int)",
+                themeClass: "theme-lit",
+                icon: "ph-quill",
+                content: `
+                    <div class="space-y-6">
+                        <div class="p-4 border-l-4 border-yellow-600 bg-opacity-10 bg-black rounded-r">
+                            <h3 class="text-lg font-bold accent-text mb-2">Objectives & Outcomes</h3>
+                            <ul class="list-disc ml-5 space-y-1 opacity-90">
+                                <li>Explore British Drama context, form, and stage.</li>
+                                <li>Understand British society, culture, and politics of the 16th/17th century.</li>
+                                <li>Gain insight into historical British life through texts.</li>
+                            </ul>
                         </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        window.markStatus = function(dateKey, index, status) {
-            if (!attendanceData[dateKey]) attendanceData[dateKey] = {};
-            
-            // Toggle if clicking same status
-            if (attendanceData[dateKey][index] === status) {
-                delete attendanceData[dateKey][index];
-            } else {
-                attendanceData[dateKey][index] = status;
-            }
-
-            localStorage.setItem('debojit_attendance_2026', JSON.stringify(attendanceData));
-            renderRoutine();
-            updateStats();
-        };
-
-        function calculateStats(startLimit) {
-            let totalPossible = 0;
-            let totalAttended = 0;
-            const subjectTallies = {};
-            CONFIG.subjects.forEach(s => subjectTallies[s.id] = { attended: 0, total: 0 });
-
-            // Iterate from start date to today
-            let cursor = new Date(startLimit);
-            while (cursor <= CONFIG.today) {
-                const dayOfWeek = cursor.getDay();
-                const dateKey = cursor.toISOString().split('T')[0];
-                const classes = CONFIG.routine[dayOfWeek] || [];
-
-                classes.forEach((cls, idx) => {
-                    const status = attendanceData[dateKey]?.[idx];
-                    
-                    if (status !== 'cancelled') {
-                        totalPossible++;
-                        subjectTallies[cls.id].total++;
                         
-                        if (status === 'present') {
-                            totalAttended++;
-                            subjectTallies[cls.id].attended++;
-                        }
-                    }
-                });
-                cursor.setDate(cursor.getDate() + 1);
+                        <div>
+                            <h3 class="text-2xl font-serif border-b border-gray-600 pb-2 mb-4 accent-text">Prescribed Texts</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="card p-4 rounded hover:scale-105 transition-transform">
+                                    <span class="text-xs uppercase tracking-widest opacity-60">Anonymous</span>
+                                    <h4 class="text-xl font-bold">Everyman</h4>
+                                    <p class="text-sm italic mt-1">Morality Play</p>
+                                </div>
+                                <div class="card p-4 rounded hover:scale-105 transition-transform">
+                                    <span class="text-xs uppercase tracking-widest opacity-60">William Shakespeare</span>
+                                    <h4 class="text-xl font-bold">Othello</h4>
+                                    <p class="text-sm italic mt-1">Tragedy</p>
+                                </div>
+                                <div class="card p-4 rounded hover:scale-105 transition-transform">
+                                    <span class="text-xs uppercase tracking-widest opacity-60">Christopher Marlowe</span>
+                                    <h4 class="text-xl font-bold">Doctor Faustus</h4>
+                                    <p class="text-sm italic mt-1">Tragedy</p>
+                                </div>
+                                <div class="card p-4 rounded hover:scale-105 transition-transform">
+                                    <span class="text-xs uppercase tracking-widest opacity-60">John Webster</span>
+                                    <h4 class="text-xl font-bold">The White Devil</h4>
+                                    <p class="text-sm italic mt-1">Revenge Tragedy</p>
+                                </div>
+                                <div class="card p-4 rounded hover:scale-105 transition-transform">
+                                    <span class="text-xs uppercase tracking-widest opacity-60">Ben Jonson</span>
+                                    <h4 class="text-xl font-bold">Volpone</h4>
+                                    <p class="text-sm italic mt-1">City Comedy</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            educationMinor: {
+                id: "edu-min",
+                title: "Education Minor",
+                subtitle: "History of Education in India",
+                code: "MIN-EDU-2.1",
+                credits: 4,
+                marks: "60 (End) + 40 (Int)",
+                themeClass: "theme-edu",
+                icon: "ph-book-bookmark",
+                content: `
+                    <div class="space-y-8">
+                        <div class="border-2 border-dashed border-stone-400 p-4">
+                            <h3 class="font-bold underline mb-2">Objectives</h3>
+                            <p>To acquire knowledge of educational development in British India and understand significant Education Commissions and Policies.</p>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th class="p-2 border border-stone-600">Unit</th>
+                                        <th class="p-2 border border-stone-600">Topic</th>
+                                        <th class="p-2 border border-stone-600">Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="p-2 border border-stone-600 align-top">Unit 1<br>(1800-1853)</td>
+                                        <td class="p-2 border border-stone-600 align-top font-bold">Education during British Period</td>
+                                        <td class="p-2 border border-stone-600 text-sm">East India Company activities, Missionaries, Charter Act 1813, Oriental-Occidental controversy, Macaulay's Minute (1835), Bentinck's Resolution.</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 border border-stone-600 align-top">Unit 2<br>(1854-1946)</td>
+                                        <td class="p-2 border border-stone-600 align-top font-bold">British Period (Part 2)</td>
+                                        <td class="p-2 border border-stone-600 text-sm">Wood's Despatch (1854), Hunter Commission (1882), Lord Curzon's Policy, Gokhale's Bill, Calcutta Univ. Commission (1917), Hartog Committee (1929), Wardha Scheme (1937), Sargent Report (1944).</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 border border-stone-600 align-top">Unit 3</td>
+                                        <td class="p-2 border border-stone-600 align-top font-bold">Post Independence I</td>
+                                        <td class="p-2 border border-stone-600 text-sm">University Education Commission (1948), Secondary Education Commission (1952-53), Education Commission (1964-66).</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2 border border-stone-600 align-top">Unit 4</td>
+                                        <td class="p-2 border border-stone-600 align-top font-bold">Post Independence II</td>
+                                        <td class="p-2 border border-stone-600 text-sm">NPE 1986, Ramamurthy Committee (1990), Janardan Reddy Committee, Revised NPE 1992, National Knowledge Commission, NEP 2020 features.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="p-4 bg-yellow-50 border border-stone-300">
+                            <strong>Assessment:</strong> 1 Sessional Test (20) + Activities (20) like Assignments, Field Work, Seminars.
+                        </div>
+                    </div>
+                `
+            },
+            englishSEC: {
+                id: "eng-sec",
+                title: "English SEC",
+                subtitle: "Skill Enhancement in English - II",
+                code: "SEC-ENG-2.1",
+                credits: 3,
+                marks: "45 (End) + 30 (Int)",
+                themeClass: "theme-modern",
+                icon: "ph-pen-nib",
+                content: `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="col-span-1 md:col-span-2 p-6 bg-white rounded-xl shadow-sm border-l-4 border-blue-400">
+                            <h3 class="text-xl font-bold text-blue-900 mb-2">Goal: Creative Writing</h3>
+                            <p class="text-gray-700">To build creative writing skills, map creative talent, and develop a sense of expressing oneself through essays and plays.</p>
+                        </div>
+
+                        <!-- Section 1 -->
+                        <div class="card p-6">
+                            <h4 class="text-lg font-bold mb-4 text-blue-600 border-b pb-2">Section 1: The Craft</h4>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-start gap-2">
+                                    <i class="ph ph-check-circle text-blue-400 mt-1"></i>
+                                    <span><strong>Unit 1: Literary Terms</strong><br>Plot, characterization, dialogue, monologue, soliloquy, irony, metaphor, simile, metonymy, alliteration.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="ph ph-check-circle text-blue-400 mt-1"></i>
+                                    <span><strong>Unit 2: Drama</strong><br>Tragedy and Comedy types.</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="ph ph-check-circle text-blue-400 mt-1"></i>
+                                    <span><strong>Unit 3: Prose</strong><br>Essays, periodicals, articles.</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Section 2 -->
+                        <div class="card p-6">
+                            <h4 class="text-lg font-bold mb-4 text-indigo-600 border-b pb-2">Section 2: Reading Literature</h4>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-100 p-2 rounded text-indigo-700"><i class="ph ph-book-open"></i></div>
+                                    <div>
+                                        <p class="font-bold">Hamlet</p>
+                                        <p class="text-xs text-gray-500">William Shakespeare</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-100 p-2 rounded text-indigo-700"><i class="ph ph-tree"></i></div>
+                                    <div>
+                                        <p class="font-bold">As You Like It</p>
+                                        <p class="text-xs text-gray-500">William Shakespeare</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="bg-indigo-100 p-2 rounded text-indigo-700"><i class="ph ph-scroll"></i></div>
+                                    <div>
+                                        <p class="font-bold">Of Studies</p>
+                                        <p class="text-xs text-gray-500">Francis Bacon</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            bengaliMDC: {
+                id: "ben-mdc",
+                title: "Bengali MDC",
+                subtitle: "বিশ শতকের বাংলা সাহিত্য পাঠ – ১",
+                code: "MD-BEN-2.1",
+                credits: 3,
+                marks: "75 Total (60+15)",
+                themeClass: "theme-ben",
+                icon: "ph-feather",
+                content: `
+                    <div class="space-y-6 text-center md:text-left">
+                        <div class="flex flex-col md:flex-row gap-4 justify-center md:justify-between items-center border-b-2 border-red-700 pb-4">
+                            <h3 class="text-2xl font-bold text-red-800">পাঠ্যসূচি (Syllabus)</h3>
+                            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-bold">Total Marks: 75</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Unit 1 -->
+                            <div class="card p-6 text-center hover:shadow-xl transition-shadow">
+                                <div class="h-12 w-12 bg-red-50 rounded-full mx-auto flex items-center justify-center mb-4 text-red-700 text-2xl">ক</div>
+                                <h4 class="text-xl font-bold mb-2">Unit 1: কাব্য</h4>
+                                <p class="text-lg font-medium text-gray-700">ছোট রামায়ণ</p>
+                                <p class="text-sm text-gray-500 mt-2">উপেন্দ্রকিশোর রায়চৌধুরী</p>
+                                <p class="text-xs text-red-400 mt-4 font-bold">20 Marks</p>
+                            </div>
+
+                            <!-- Unit 2 -->
+                            <div class="card p-6 text-center hover:shadow-xl transition-shadow">
+                                <div class="h-12 w-12 bg-red-50 rounded-full mx-auto flex items-center justify-center mb-4 text-red-700 text-2xl">খ</div>
+                                <h4 class="text-xl font-bold mb-2">Unit 2: নাটক</h4>
+                                <p class="text-lg font-medium text-gray-700">বকবধ পালা</p>
+                                <p class="text-sm text-gray-500 mt-2">লীলা মজুমদার</p>
+                                <p class="text-xs text-red-400 mt-4 font-bold">20 Marks</p>
+                            </div>
+
+                            <!-- Unit 3 -->
+                            <div class="card p-6 text-center hover:shadow-xl transition-shadow">
+                                <div class="h-12 w-12 bg-red-50 rounded-full mx-auto flex items-center justify-center mb-4 text-red-700 text-2xl">গ</div>
+                                <h4 class="text-xl font-bold mb-2">Unit 3: উপন্যাস</h4>
+                                <p class="text-lg font-medium text-gray-700">তুঙ্গভদ্রার তীরে</p>
+                                <p class="text-sm text-gray-500 mt-2">শরদিন্দু বন্দ্যোপাধ্যায়</p>
+                                <p class="text-xs text-red-400 mt-4 font-bold">20 Marks</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 p-4 bg-white border border-red-200 rounded">
+                            <h4 class="font-bold text-red-800 mb-2">Reference Books (সহায়ক গ্রন্থ):</h4>
+                            <p class="text-sm text-gray-600">বাংলা শিশু-কিশোর সাহিত্যের ইতিহাস ও বিবর্তন, বাংলা শিশুসাহিত্য (বুদ্ধদেব বসু), কথাশিল্পী শরদিন্দু (প্রমীলা ভট্টাচার্য) ইত্যাদি।</p>
+                        </div>
+                    </div>
+                `
+            },
+            englishAECC: {
+                id: "eng-aecc",
+                title: "AECC English",
+                subtitle: "Communication Skills",
+                code: "AECC-ENG-4.1",
+                credits: 2,
+                marks: "30 (End) + 20 (Int)",
+                themeClass: "theme-modern",
+                icon: "ph-chats-circle",
+                content: `
+                    <div class="bg-white bg-opacity-90 p-6 rounded-xl shadow-lg">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800">Communication Curriculum</h3>
+                            <span class="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full uppercase font-bold">Compulsory</span>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <!-- Unit 1 -->
+                            <div class="flex gap-4 p-3 hover:bg-gray-50 rounded transition">
+                                <div class="font-bold text-xl text-gray-300">01</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Introduction to Communication</h4>
+                                    <p class="text-sm text-gray-600">Theory, Personal, Social, Business, Intra/Inter-personal.</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Unit 2 -->
+                            <div class="flex gap-4 p-3 hover:bg-gray-50 rounded transition">
+                                <div class="font-bold text-xl text-gray-300">02</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Technology</h4>
+                                    <p class="text-sm text-gray-600">Internet, Blogs, Email, Social Media (Pros & Cons).</p>
+                                </div>
+                            </div>
+
+                            <!-- Unit 3 -->
+                            <div class="flex gap-4 p-3 hover:bg-gray-50 rounded transition">
+                                <div class="font-bold text-xl text-gray-300">03</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Speaking</h4>
+                                    <p class="text-sm text-gray-600">Group Discussion, Public Speech, Effective Communication.</p>
+                                </div>
+                            </div>
+
+                            <!-- Unit 4 -->
+                            <div class="flex gap-4 p-3 hover:bg-gray-50 rounded transition">
+                                <div class="font-bold text-xl text-gray-300">04</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Reading & Understanding</h4>
+                                    <p class="text-sm text-gray-600">Analysis, Interpretation, Translation (Indian Lang ↔ English).</p>
+                                </div>
+                            </div>
+
+                            <!-- Unit 5 -->
+                            <div class="flex gap-4 p-3 hover:bg-gray-50 rounded transition">
+                                <div class="font-bold text-xl text-gray-300">05</div>
+                                <div>
+                                    <h4 class="font-bold text-gray-800">Writing</h4>
+                                    <p class="text-sm text-gray-600">Resume Writing, Note Making, Grammar (Prefix/Suffix, Conjunctions, Correction).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            vacOne: {
+                id: "vac-1",
+                title: "Understanding India",
+                subtitle: "Value Added Course 1",
+                code: "VAC 2.1",
+                credits: 2,
+                marks: "30 (End) + 20 (Int)",
+                themeClass: "theme-vac",
+                icon: "ph-flag",
+                content: `
+                   <div class="space-y-6">
+                        <div class="header-strip"></div>
+                        <div class="p-6 bg-white rounded shadow-md">
+                            <h3 class="text-center font-serif text-2xl font-bold mb-6 text-gray-800">The Context of India</h3>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="text-lg font-bold text-orange-600 mb-2 border-b border-orange-200">Unit 1: Introducing India</h4>
+                                    <ul class="list-none text-sm space-y-2 text-gray-700">
+                                        <li><strong>The Land:</strong> Geographical setting, Environment.</li>
+                                        <li><strong>The People:</strong> Migrations (Aryans, Persians, Greeks, Mughals etc.) and their contribution to culture.</li>
+                                        <li><strong>The Name:</strong> Jambudvipa, Sindhu, Hindustan, India, Bharat.</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="text-lg font-bold text-blue-800 mb-2 border-b border-blue-200">Unit 2: Knowledge System</h4>
+                                    <ul class="list-none text-sm space-y-2 text-gray-700">
+                                        <li>Traditional: Gurukuls, Madrasas.</li>
+                                        <li>Modern: British Policies, Expansion of Higher Ed.</li>
+                                        <li>Policies: NEP 1986 and NEP 2020. Role of Teachers.</li>
+                                    </ul>
+                                </div>
+
+                                <div>
+                                    <h4 class="text-lg font-bold text-green-700 mb-2 border-b border-green-200">Unit 3: Indian Economy</h4>
+                                    <ul class="list-none text-sm space-y-2 text-gray-700">
+                                        <li>Post-independence Goals & Policies.</li>
+                                        <li>Social Justice, Economic Equality.</li>
+                                        <li>Economy through ages (Agriculture, Industry, Trade).</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                   </div>
+                `
+            },
+            vacTwo: {
+                id: "vac-2",
+                title: "Constitutional Values",
+                subtitle: "Value Added Course 2",
+                code: "VAC 2.2",
+                credits: 2,
+                marks: "30 (End) + 20 (Int)",
+                themeClass: "theme-vac",
+                icon: "ph-scales",
+                content: `
+                    <div class="space-y-6">
+                        <div class="text-center mb-8">
+                            <i class="ph ph-scales text-5xl text-gray-700"></i>
+                            <h3 class="text-3xl font-serif mt-2">The Constitution</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="card p-6 border-t-4 border-orange-500">
+                                <h4 class="font-bold text-lg mb-3">Unit 1: Introduction</h4>
+                                <ul class="text-sm space-y-2 text-gray-600">
+                                    <li>Federal Republic, Rule of Law</li>
+                                    <li>Separation of Powers</li>
+                                    <li>Sovereignty, Socialism, Democracy</li>
+                                    <li>Secularism & Sarva Dharma Sama Bhava</li>
+                                </ul>
+                            </div>
+
+                            <div class="card p-6 border-t-4 border-gray-800">
+                                <h4 class="font-bold text-lg mb-3">Unit 2: Values</h4>
+                                <ul class="text-sm space-y-2 text-gray-600">
+                                    <li><strong>Justice:</strong> Social, Political, Economic</li>
+                                    <li><strong>Liberty:</strong> Thought, Expression, Belief</li>
+                                    <li><strong>Equality:</strong> Before law</li>
+                                    <li><strong>Fraternity:</strong> Dignity, Unity</li>
+                                </ul>
+                            </div>
+
+                            <div class="card p-6 border-t-4 border-green-600">
+                                <h4 class="font-bold text-lg mb-3">Unit 3: Duties</h4>
+                                <ul class="text-sm space-y-2 text-gray-600">
+                                    <li>Ancient notions of righteousness</li>
+                                    <li>Fundamental Duties (Art 51A)</li>
+                                    <li>Legal status & Judicial approach</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
             }
+        };
 
-            return {
-                overall: totalPossible === 0 ? 0 : Math.round((totalAttended / totalPossible) * 100),
-                subjects: subjectTallies
-            };
-        }
+        // --- DOM ELEMENTS ---
+        const appRoot = document.getElementById('app-root');
+        const body = document.body;
+        const homeBtn = document.getElementById('home-btn');
 
-        function updateStats() {
-            const statsJan = calculateStats(CONFIG.startDate);
-            const statsFeb = calculateStats(CONFIG.properDate);
+        // --- RENDER FUNCTIONS ---
 
-            document.getElementById('overall-pct-default').innerText = statsJan.overall + '%';
-            document.getElementById('overall-pct-proper').innerText = statsFeb.overall + '%';
+        function renderDashboard() {
+            // Reset Theme
+            body.className = "theme-dashboard min-h-screen flex flex-col transition-colors duration-700";
+            homeBtn.classList.add('hidden');
 
-            const subContainer = document.getElementById('subject-stats');
-            subContainer.innerHTML = CONFIG.subjects.map(sub => {
-                const data = statsJan.subjects[sub.id];
-                const pct = data.total === 0 ? 0 : Math.round((data.attended / data.total) * 100);
-                return `
-                    <div class="space-y-1">
-                        <div class="flex justify-between text-xs">
-                            <span class="text-slate-300">${sub.name}</span>
-                            <span class="font-bold" style="color: ${sub.color}">${pct}%</span>
+            let subjectCardsHTML = '';
+            
+            // Generate cards for dashboard
+            for (const key in syllabusData) {
+                const sub = syllabusData[key];
+                subjectCardsHTML += `
+                    <div onclick="renderSubject('${key}')" class="card p-6 rounded-xl cursor-pointer hover:-translate-y-2 transition-transform duration-300 flex flex-col items-start justify-between h-48 group">
+                        <div class="w-full flex justify-between items-start">
+                            <div class="p-3 rounded-lg bg-gray-100 group-hover:bg-gray-200 transition-colors text-2xl">
+                                <i class="ph ${sub.icon}"></i>
+                            </div>
+                            <span class="text-xs font-bold px-2 py-1 bg-gray-200 rounded text-gray-600">${sub.code}</span>
                         </div>
-                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="h-full transition-all duration-1000" style="width: ${pct}%; background: ${sub.color}"></div>
+                        <div>
+                            <h3 class="font-bold text-lg leading-tight group-hover:text-blue-600 transition-colors">${sub.title}</h3>
+                            <p class="text-sm text-gray-500 mt-1">${sub.subtitle}</p>
                         </div>
-                        <div class="text-[9px] text-slate-500 text-right">${data.attended}/${data.total} Classes</div>
                     </div>
                 `;
-            }).join('');
+            }
+
+            appRoot.innerHTML = `
+                <div class="fade-in space-y-8">
+                    <!-- Profile Section -->
+                    <section class="bg-white rounded-2xl p-6 md:p-10 shadow-lg border border-gray-100 flex flex-col md:flex-row items-center gap-6 md:gap-12">
+                        <div class="h-24 w-24 md:h-32 md:w-32 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center border-4 border-white shadow-md">
+                            <i class="ph ph-student text-5xl text-blue-900"></i>
+                        </div>
+                        <div class="text-center md:text-left space-y-2">
+                            <h2 class="text-3xl font-bold text-gray-800">${studentData.name}</h2>
+                            <div class="flex flex-wrap justify-center md:justify-start gap-3 text-sm font-medium text-gray-500">
+                                <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-100">${studentData.stream}</span>
+                                <span class="bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-100">${studentData.sem}</span>
+                                <span class="bg-gray-50 text-gray-700 px-3 py-1 rounded-full border border-gray-200">${studentData.college}</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Subject Grid -->
+                    <section>
+                        <h3 class="text-xl font-bold text-gray-700 mb-6 flex items-center gap-2">
+                            <i class="ph ph-books text-2xl"></i> Your Subjects
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${subjectCardsHTML}
+                        </div>
+                    </section>
+                </div>
+            `;
         }
 
-        init();
+        function renderSubject(key) {
+            const data = syllabusData[key];
+            
+            // Change Theme Class
+            body.className = `${data.themeClass} min-h-screen flex flex-col transition-colors duration-700`;
+            homeBtn.classList.remove('hidden');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            appRoot.innerHTML = `
+                <div class="fade-in w-full max-w-5xl mx-auto pb-10">
+                    <button onclick="renderDashboard()" class="back-btn mb-6 flex items-center gap-2 text-sm font-bold opacity-70 hover:opacity-100">
+                        <i class="ph ph-arrow-left text-lg"></i> Back to Dashboard
+                    </button>
+
+                    <div class="header-section mb-10 text-center md:text-left border-b border-opacity-30 border-current pb-6">
+                        <span class="text-sm font-bold tracking-widest uppercase opacity-60 mb-2 block">${data.code} • Credits: ${data.credits}</span>
+                        <h1 class="text-4xl md:text-6xl font-bold mb-2">${data.title}</h1>
+                        <p class="text-xl md:text-2xl opacity-80 italic">${data.subtitle}</p>
+                        <div class="mt-4 inline-block px-4 py-1 rounded border border-opacity-40 border-current text-sm font-bold opacity-80">
+                            Marks: ${data.marks}
+                        </div>
+                    </div>
+
+                    <div class="syllabus-content">
+                        ${data.content}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- INITIALIZE ---
+        renderDashboard();
+
     </script>
 </body>
-
 </html>
